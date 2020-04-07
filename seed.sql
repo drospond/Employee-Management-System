@@ -35,4 +35,4 @@ INSERT INTO roles (title, salary, department_id)
 VALUES ("Head of Sales", 50000, 1), ("Head of Accounting", 45000, 2), ("Branch Manager", 50001, 3);
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
-VALUES ("Jim","Halpert", 1, 3), ("Oscar","Martinez", 2, 3), ("Michael","Scott", 3, 3);
+VALUES ("Jim","Halpert", 1, 3), ("Oscar","Martinez", 2, 3), ("Michael","Scott", 3, null);
