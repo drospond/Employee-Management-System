@@ -25,8 +25,7 @@ CREATE TABLE employees(
     last_name VARCHAR(30),
     role_id INT,
     manager_id INT,
-    FOREIGN KEY (role_id) REFERENCES roles(id),
-    FOREIGN KEY (manager_id) REFERENCES employees(id)
+    FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
 INSERT INTO departments(name)
@@ -36,4 +35,4 @@ INSERT INTO roles (title, salary, department_id)
 VALUES ("Head of Sales", 50000, 1), ("Head of Accounting", 45000, 2), ("Branch Manager", 50001, 3);
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
-VALUES ("Jim","Halpert", 1, 1), ("Oscar","Martinez", 2, 2), ("Michael","Scott", 3, 3);
+VALUES ("Jim","Halpert", 1, 3), ("Oscar","Martinez", 2, 3), ("Michael","Scott", 3, 3);
