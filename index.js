@@ -31,6 +31,7 @@ function startInterface(){
                 addDepartment();
                 break;
             case "Update an employee's role":
+                updateRole();
                 break;
             case "Quit":
                 process.exit();
@@ -44,7 +45,7 @@ function startInterface(){
 
 startInterface();
 
-//////
+
 //MySQL queries
 const connection = mysql.createConnection({
     host: "localhost",
@@ -159,6 +160,34 @@ function addEmployee(){
             const roleId = res[1].filter(row => row.title === response.role);
             const managerId = res[2].filter(row => row.name === response.manager);
             connection.query("INSERT INTO employees(first_name, last_name, role_id, manager_id) VALUE (?,?,?,?)",[response.firstName, response.lastName, roleId[0].id, managerId[0].id]);
+        })
+    })
+}
+
+function updateRole(){
+    connection.query(`SELECT * FROM employees; SELECT * FROM roles`, (err, data)=>{
+        if(err) console.log(err);
+        const employeeArray = data[0].map(row=> row.first_name + " " + row.last_name);
+        const rolesArray = data[1].map(row=> row.title);
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "employee",
+                message: "Who's role would you like to change?",
+                choices: employeeArray
+            },
+            {
+                type: "list",
+                name: "role",
+                message: "What is their new role?",
+                choices: rolesArray
+            }
+        ]).then(res=>{
+            const roleId = data[1].filter(row => row.title === res.role);
+            const nameArray = res.employee.split(" ");
+            const firstName = nameArray[0];
+            const lastName = nameArray[1];
+            connection.query("UPDATE employees SET role_id = ? WHERE first_name = ? AND last_name = ?", [roleId[0].id,firstName,lastName])
         })
     })
 }
