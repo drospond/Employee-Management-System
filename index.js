@@ -43,7 +43,6 @@ function startInterface(){
     })
 }
 
-startInterface();
 
 
 //MySQL queries
@@ -66,6 +65,7 @@ function viewEmployees(){
     (err, data)=>{
         if(err) console.log(err);
         console.table(data);
+        startInterface();
     })
 }
 
@@ -74,6 +74,7 @@ function viewRoles(){
     (err, data)=>{
         if(err) console.log(err);
         console.table(data);
+        startInterface();
     })
 }
 
@@ -81,6 +82,7 @@ function viewDepartments(){
     connection.query("SELECT * FROM departments;", (err, data)=>{
         if(err) console.log(err);
         console.table(data);
+        startInterface();
     })
 }
 
@@ -91,7 +93,10 @@ function addDepartment(){
             name: "department",
             message: "What is the name of the new department?"
         }
-    ]).then((res)=>connection.query(`INSERT INTO departments(department_name) VALUE (?);`, res.department));
+    ]).then((res)=>{
+        connection.query(`INSERT INTO departments(department_name) VALUE (?);`, res.department);
+        startInterface();
+    });
 }
 
 function addRole(){
@@ -118,6 +123,7 @@ function addRole(){
         ]).then((res)=>{
             const departmentId = data.filter(row => row.department_name === res.department);
             connection.query("INSERT INTO roles(title, salary, department_id) VALUE (?,?,?)",[res.role, Number(res.salary),departmentId[0].id]);
+            startInterface();
         })
     })
 }
@@ -160,6 +166,7 @@ function addEmployee(){
             const roleId = res[1].filter(row => row.title === response.role);
             const managerId = res[2].filter(row => row.name === response.manager);
             connection.query("INSERT INTO employees(first_name, last_name, role_id, manager_id) VALUE (?,?,?,?)",[response.firstName, response.lastName, roleId[0].id, managerId[0].id]);
+            startInterface();
         })
     })
 }
@@ -187,10 +194,10 @@ function updateRole(){
             const nameArray = res.employee.split(" ");
             const firstName = nameArray[0];
             const lastName = nameArray[1];
-            connection.query("UPDATE employees SET role_id = ? WHERE first_name = ? AND last_name = ?", [roleId[0].id,firstName,lastName])
+            connection.query("UPDATE employees SET role_id = ? WHERE first_name = ? AND last_name = ?", [roleId[0].id,firstName,lastName]);
+            startInterface();
         })
     })
 }
-//to figure out:
-    //starting interface after table in console
-    //creating DB
+
+startInterface();

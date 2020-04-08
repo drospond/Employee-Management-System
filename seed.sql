@@ -1,4 +1,5 @@
 DROP DATABASE IF EXISTS employee_trackerDB;
+
 CREATE DATABASE employee_trackerDB;
 
 USE employee_trackerDB;
@@ -6,7 +7,7 @@ USE employee_trackerDB;
 CREATE TABLE departments(
     id INT AUTO_INCREMENT,
     PRIMARY KEY(id),
-    name VARCHAR(30)
+    department_name VARCHAR(30)
 );
 
 CREATE TABLE roles(
@@ -28,7 +29,7 @@ CREATE TABLE employees(
     FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
-INSERT INTO departments(name)
+INSERT INTO departments(department_name)
 VALUES ("Sales"), ("Accounting"), ("Management");
 
 INSERT INTO roles (title, salary, department_id)
