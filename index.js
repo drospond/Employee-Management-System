@@ -51,7 +51,8 @@ const connection = mysql.createConnection({
     port: 3306,
     user: "root",
     password: "root",
-    database: "employee_trackerDB"
+    database: "employee_trackerDB",
+    multipleStatements: true
 })
 
 connection.connect(function(err){
@@ -121,29 +122,43 @@ function addRole(){
 }
 
 function addEmployee(){
-    connection.query(`SELECT department_name, id FROM departments;`, (err, departmentData)=>{
+    connection.query(`SELECT department_name, id FROM departments;
+    SELECT id, title FROM roles;
+    SELECT id, concat(first_name, " ", last_name) as name, role_id FROM employees;`, (err, res)=>{
         if(err) console.log(err);
-        departmentsArray = departmentData.map(row=> row.department_name);
+        const rolesArray = res[1].map(row => row.title);
+        let managerId;
+        for(var i = 0; i < res[1].length; i++){
+            if(res[1][i].title === "Manager") managerId = res[1][i].id;
+        }
+        const managerArray = res[2].filter(row => row.role_id === managerId).map(row => row.name);
         inquirer.prompt([
             {
                 type: "input",
-                name: "role",
-                message: "What is the name of the new role?"
-            },
-            {
-                type: "list",
-                name: "department",
-                message: "What department is the role in?",
-                choices: departmentsArray
+                name: "firstName",
+                message: "What is the first name of the new employee?"
             },
             {
                 type: "input",
-                name: "salary",
-                message: "What is the salary of this role?"
+                name: "lastName",
+                message: "What is the last name of the new employee?"
+            },
+            {
+                type: "list",
+                name: "role",
+                message: "What is their role?",
+                choices: rolesArray
+            },
+            {
+                type: "list",
+                name: "manager",
+                message: "Who is their manager?",
+                choices: managerArray
             }
-        ]).then((res)=>{
-            const departmentId = departmentData.filter(row => row.department_name === res.department);
-            connection.query("INSERT INTO roles(title, salary, department_id) VALUE (?,?,?)",[res.role, Number(res.salary),departmentId[0].id]);
+        ]).then((response)=>{
+            const roleId = res[1].filter(row => row.title === response.role);
+            const managerId = res[2].filter(row => row.name === response.manager);
+            connection.query("INSERT INTO employees(first_name, last_name, role_id, manager_id) VALUE (?,?,?,?)",[response.firstName, response.lastName, roleId[0].id, managerId[0].id]);
         })
     })
 }
